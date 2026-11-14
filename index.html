@@ -146,7 +146,7 @@
 
   <div class="topbar">
     <button class="mini" id="tgConn" aria-label="Verbindung ein-/ausklappen"><span class="dot" id="dot"></span><span class="mlbl" id="connMini">Verbinden</span></button>
-    <button class="mini" id="tgTrip" aria-label="Fahrtaufzeichnung ein-/ausklappen" hidden><span class="recdot" id="tripIcon"></span><span class="mlbl" id="tripMini"></span></button>
+    <button class="mini" id="tgTrip" aria-label="Fahrtaufzeichnung ein-/ausklappen"><span class="recdot" id="tripIcon"></span><span class="mlbl" id="tripMini">Fahrt</span></button>
     <span class="spacer"></span>
     <button class="mini" id="btnTheme" aria-label="Hell/Dunkel umschalten">☀️</button>
   </div>
@@ -157,15 +157,15 @@
   </div>
 
   <div class="tripbar" id="tripbar" hidden>
-    <button class="ghost" id="btnTrip">● Fahrt aufzeichnen</button>
-    <div class="tripstat"><span id="tripTime">00:00</span> · <span id="tripDist">0,0 km</span></div>
+    <button class="ghost" id="btnTrip" disabled>● Fahrt aufzeichnen</button>
+    <div class="tripstat" id="tripStat">erst verbinden</div>
   </div>
 
   <section class="panel">
-    <div class="ph2"><span>Akku</span><span id="battTxt">– %</span></div>
+    <div class="ph2"><span>Akku (Display)</span><span id="battTxt">– %</span></div>
     <div class="bar"><i id="battBar"></i></div>
     <div class="pleg">
-      <span><b id="battEst" style="color:var(--accent2)">–</b></span>
+      <span>Schätzung <b id="battEst" style="color:var(--accent2)">–</b></span>
       <span id="battDetail"></span>
     </div>
   </section>
@@ -186,7 +186,7 @@
   </section>
 
   <section class="panel">
-    <div class="ph2"><span>Leistung</span><span id="wattTot">– W</span></div>
+    <div class="ph2"><span>Gesamtleistung</span><span id="wattTot">– W</span></div>
     <div class="pbar">
       <i id="pbMotor" style="background:var(--warn)"></i>
       <i id="pbRider" style="background:var(--accent2)"></i>
@@ -207,8 +207,6 @@
     <span class="chip" id="cLock">Sperre</span>
     <span class="chip" id="cCruise">Tempomat</span>
     <span class="chip" id="cErr">Fehler: –</span>
-    <span class="chip" id="cFw">Firmware: –</span>
-    <span class="chip" id="cFrame">Format: –</span>
   </div>
 
   <details class="setpanel" id="tripsPanel">
@@ -244,7 +242,7 @@
   </details>
   <p class="note">Diese Seite liest nur Werte aus dem Display. Sie ändert keine Einstellungen an Display oder Motor.
   Bildschirm bitte eingeschaltet lassen – im Hintergrund trennt der Browser die Verbindung.</p>
-  <div class="foot">Bike-Display · v0.26</div>
+  <div class="foot">Bike-Display · v0.27</div>
 </main>
 
 <script>
@@ -569,7 +567,7 @@ function render(s) {
   const soc = updateSoc(s.voltage, s.current);
   if (soc.soc != null) {
     $("battEst").textContent = "≈ " + soc.soc.toFixed(0) + " %";
-    $("battDetail").textContent = soc.consumed.toFixed(1) + " / " + PACK.capacityAh + " Ah";
+    $("battDetail").textContent = "−" + soc.consumed.toFixed(1) + " Ah";   // seit dem Verbinden entnommen
   }
   if (trip) sampleTrip(s, {        // geglättete Analogwerte für die 1-Hz-Aufzeichnung
     speed: speedS,
@@ -591,7 +589,6 @@ function render(s) {
   const fault = !ERR_BENIGN.has(s.error);
   $("cErr").textContent = fault ? "Störung: " + errorName(s.error) : "Status: " + errorName(s.error);
   $("cErr").className = "chip" + (fault ? " bad" : "");
-  $("cFrame").textContent = "Format: " + s.format;
 }
 
 // ---- Main flow ----
@@ -637,7 +634,7 @@ async function connect() {
     log("Verbunden, Benachrichtigungen aktiv.");
     setStatus("on", "Verbunden", device.name || "");
     $("btnConnect").textContent = "Trennen";
-    $("tgTrip").hidden = false;
+    $("btnTrip").disabled = false; $("tripStat").textContent = "bereit";
     try { if ("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
     resetSmoothing();
     resetCoulomb();
@@ -661,7 +658,7 @@ async function connect() {
 function onDisconnected() {
   running = false;
   if (trip) stopTrip();          // laufende Fahrt sichern
-  $("tgTrip").hidden = true; setTripOpen(false);
+  $("btnTrip").disabled = true; $("tripStat").textContent = "erst verbinden"; setTripOpen(false);
   log("Verbindung getrennt.");
   setStatus("err", "Getrennt", "Zum erneuten Verbinden tippen.");
   $("btnConnect").textContent = "Verbinden";
@@ -685,7 +682,6 @@ async function loop() {
     const id = await request(REQ.identity);
     if (id) {
       const i = decodeIdentity(id);
-      $("cFw").textContent = "Firmware: " + i.fw + " (R" + i.release + ")";
       log("Identität: MAC " + i.mac + ", Firmware " + i.fw + ", Release " + i.release);
     }
 
@@ -709,6 +705,7 @@ async function loop() {
       const rx = await request(live, good > 2 && !recording);   // Anfang + bei aktiver Aufzeichnung + Fehler loggen
       if (rx) {
         misses = 0; good++;
+        if (good === 1) log("Live-Format: " + (live === REQ.liveV04 ? "V04" : "V01"));
         render(live === REQ.liveV04 ? decodeV04(rx) : decodeV01(rx));
       } else if (++misses >= 3 && good === 0) {
         live = (live === REQ.liveV04) ? REQ.liveV01 : REQ.liveV04;
@@ -775,7 +772,7 @@ async function stopTrip() {
   stopGeo();
   const t = trip; trip = null;
   $("btnTrip").textContent = "● Fahrt aufzeichnen"; $("btnTrip").classList.remove("rec");
-  $("tripIcon").classList.remove("rec"); $("tripMini").textContent = "";
+  $("tripIcon").classList.remove("rec"); $("tripMini").textContent = "Fahrt"; $("tripStat").textContent = "bereit";
   if (t.samples.length >= 2) {
     t.endTs = Date.now(); t.summary = tripSummary(t);
     try { await dbPut(store(t)); log("Fahrt gespeichert (" + t.samples.length + " Punkte, " + t.dist.toFixed(1) + " km)."); }
@@ -809,9 +806,9 @@ function sampleTrip(s, sm) {
 }
 function updateTripStat() {
   if (!trip) return;
-  $("tripTime").textContent = fmtDur(Math.round((Date.now() - trip.startTs) / 1000));
-  $("tripMini").textContent = $("tripTime").textContent;
-  $("tripDist").textContent = trip.dist.toFixed(1).replace(".", ",") + " km";
+  const tm = fmtDur(Math.round((Date.now() - trip.startTs) / 1000));
+  $("tripMini").textContent = tm;
+  $("tripStat").textContent = tm + " · " + trip.dist.toFixed(1).replace(".", ",") + " km";
 }
 function tripSummary(t) {
   const durS = Math.round((t.endTs - t.startTs) / 1000);
@@ -882,7 +879,7 @@ async function renderTrips() {
     cb.addEventListener("change", () => { if (cb.checked) tripSel.add(t.id); else tripSel.delete(t.id); updateTripActions(); });
     const info = document.createElement("div");
     info.innerHTML = "<div class=\"th\"><span>" + d.toLocaleDateString("de-AT") + " " + d.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" }) + "</span><span>" + sm.dist.toFixed(1).replace(".", ",") + " km</span></div>"
-      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh</div>";
+      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh · " + t.samples.length + " Messpunkte</div>";
     el.appendChild(cb); el.appendChild(info); box.appendChild(el);
   }
   updateTripActions();
