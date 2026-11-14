@@ -243,7 +243,7 @@
   </details>
   <p class="note">Diese Seite liest nur Werte aus dem Display. Sie ändert keine Einstellungen an Display oder Motor.
   Bildschirm bitte eingeschaltet lassen – im Hintergrund trennt der Browser die Verbindung.</p>
-  <div class="foot">Bike-Display · v0.28</div>
+  <div class="foot">Bike-Display · v0.30</div>
 </main>
 
 <script>
@@ -329,6 +329,11 @@ function showAlert(html) { const a = $("alert"); a.innerHTML = html; a.style.dis
 // ---- BLE session ----
 let device = null, chWrite = null, chNotify = null, running = false, wakeLock = null;
 let curMode = null;        // "road" | "offroad" für das Theme
+// Unterstützungsstufe: Das Protokoll liefert immer den Rohwert 0–9. Je nach Display-Einstellung
+// (Assist-Typ aus 22 29: 0 = 9 Stufen, 3 = 3 Stufen, 5 = 5 Stufen) rechnet die Original-App so um:
+const ASSIST_MAPS = { 3: { 0: 0, 1: 1, 5: 2, 9: 3 }, 5: { 0: 0, 1: 1, 3: 2, 5: 3, 7: 4, 9: 5 } };
+let assistType = 0;        // wird beim Lesen der Display-Einstellungen gesetzt
+function displayAssist(raw) { const m = ASSIST_MAPS[assistType]; return (m && raw in m) ? m[raw] : raw; }
 let lastLight = 0;         // zuletzt gelesener Lichtzustand (für den Umschalter)
 let lastLightState = null; // für die Theme-Kopplung (nur bei Änderung umschalten)
 const pendingCommands = []; // Schreibkommandos, die die Schleife zwischen den Abfragen sendet
@@ -534,7 +539,7 @@ function render(s) {
   // Rohwerte in die Kacheln (für Diagnose exakt), geglättete Werte in die Gauges.
   $("volt").textContent = fmt(s.voltage, 1);
   $("voltCell").textContent = "· " + (s.voltage / BATTERY.cells).toFixed(2) + " V/Z";
-  $("assist").textContent = s.assist;
+  $("assist").textContent = displayAssist(s.assist);
   $("mode").textContent = s.mode ? "Offroad" : "Road";
   const modeName = s.mode ? "offroad" : "road";   // Offroad → rötliches Theme wie am Display
   if (modeName !== curMode) { curMode = modeName; document.documentElement.setAttribute("data-mode", modeName); updateMeta(); }
@@ -688,7 +693,7 @@ async function loop() {
     // 3) Display-Einstellungen einmalig lesen (22 29).
     const st = await request(REQ.settings);
     if (st) {
-      try { renderSettings(decodeSettings(st)); log("Display-Einstellungen gelesen."); }
+      try { const cfg = decodeSettings(st); assistType = cfg.assistLevels; renderSettings(cfg); log("Display-Einstellungen gelesen (Assist-Typ " + (assistType || 9) + " Stufen)."); }
       catch (e) { log("Einstellungen: Dekodierfehler – " + e.message); }
     } else {
       $("setBody").innerHTML = "<div class=\"setrow\"><span>Einstellungen nicht gelesen (keine gültige Antwort).</span><span></span></div>";
