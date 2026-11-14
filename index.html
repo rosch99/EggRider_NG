@@ -48,7 +48,7 @@
   #btnTrip.rec { background: var(--bad); color: #fff; border-color: var(--bad); }
   .tripstat { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 15px; }
   .tripactions { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; }
-  .tripactions button { padding: 7px 13px; min-height: 38px; font-size: 14px; }
+  .tripactions button { padding: 7px 12px; min-height: 38px; font-size: 14px; white-space: nowrap; }
   .chk { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
   input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); flex: none; margin: 0; }
   .trip { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding: 10px 0; cursor: pointer; }
@@ -63,7 +63,7 @@
   .dot.busy { background: var(--warn); }
   .dot.err { background: var(--bad); }
   #statusText { flex: 1; min-width: 0; font-size: 14px; }
-  #voltCell { margin-left: 6px; }
+  #voltCell { margin-left: 5px; font-size: 11px; }
   #statusText small { display: block; color: var(--muted); overflow-wrap: anywhere; }
   button { font: inherit; color: var(--bg); background: var(--accent); border: 0; border-radius: 12px;
     padding: 12px 16px; font-weight: 650; min-height: 46px; cursor: pointer; }
@@ -100,15 +100,17 @@
   .panel > .ph { color: var(--muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
   /* Leistungs-Balken: Verhältnis Motor zu Fahrer (Segmente = Anteil an der Gesamtleistung, Summe 100 %) */
   .ph2 { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-  .ph2 > span:first-child { color: var(--muted); font-size: 24px; font-weight: 500; }
-  .ph2 > span:last-child { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .ph2 > span:first-child { color: var(--muted); font-size: clamp(19px, 5.8vw, 24px); font-weight: 500; }
+  .ph2 > span:last-child { font-size: clamp(19px, 5.8vw, 24px); font-weight: 700; font-variant-numeric: tabular-nums; }
   .pbar { display: flex; height: 28px; border-radius: 9px; overflow: hidden; background: var(--line); }
   .pbar > i { display: block; height: 100%; width: 0; transition: width .35s ease; }
-  .pleg { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 14px; margin-top: 10px; font-size: 24px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .pleg b { font-size: 24px; }
+  .pleg { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 14px; margin-top: 10px; font-size: clamp(19px, 5.8vw, 24px); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pleg b { font-size: inherit; }
+  .pleg.small { font-size: clamp(15px, 4.4vw, 18px); }
+  .pleg.small { flex-wrap: nowrap; white-space: nowrap; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
   .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 13px 15px; min-width: 0; }
-  .tile .k { color: var(--muted); font-size: 13px; }
+  .tile .k { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tile .v { font-size: 34px; font-weight: 650; font-variant-numeric: tabular-nums; }
   .tile .v small { font-size: 15px; color: var(--muted); font-weight: 400; margin-left: 3px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
@@ -164,7 +166,7 @@
   <section class="panel">
     <div class="ph2"><span>Akku (Display)</span><span id="battTxt">– %</span></div>
     <div class="bar"><i id="battBar"></i></div>
-    <div class="pleg">
+    <div class="pleg small">
       <span>Schätzung <b id="battEst" style="color:var(--accent2)">–</b></span>
       <span id="battDetail"></span>
     </div>
@@ -205,7 +207,6 @@
   <div class="chips">
     <span class="chip" id="cLight">Licht</span>
     <span class="chip" id="cLock">Sperre</span>
-    <span class="chip" id="cCruise">Tempomat</span>
     <span class="chip" id="cErr">Fehler: –</span>
   </div>
 
@@ -242,7 +243,7 @@
   </details>
   <p class="note">Diese Seite liest nur Werte aus dem Display. Sie ändert keine Einstellungen an Display oder Motor.
   Bildschirm bitte eingeschaltet lassen – im Hintergrund trennt der Browser die Verbindung.</p>
-  <div class="foot">Bike-Display · v0.27</div>
+  <div class="foot">Bike-Display · v0.28</div>
 </main>
 
 <script>
@@ -532,7 +533,7 @@ function updateSoc(voltage, current) {
 function render(s) {
   // Rohwerte in die Kacheln (für Diagnose exakt), geglättete Werte in die Gauges.
   $("volt").textContent = fmt(s.voltage, 1);
-  $("voltCell").textContent = "· " + (s.voltage / BATTERY.cells).toFixed(2) + " V/Zelle";
+  $("voltCell").textContent = "· " + (s.voltage / BATTERY.cells).toFixed(2) + " V/Z";
   $("assist").textContent = s.assist;
   $("mode").textContent = s.mode ? "Offroad" : "Road";
   const modeName = s.mode ? "offroad" : "road";   // Offroad → rötliches Theme wie am Display
@@ -567,7 +568,7 @@ function render(s) {
   const soc = updateSoc(s.voltage, s.current);
   if (soc.soc != null) {
     $("battEst").textContent = "≈ " + soc.soc.toFixed(0) + " %";
-    $("battDetail").textContent = "−" + soc.consumed.toFixed(1) + " Ah";   // seit dem Verbinden entnommen
+    $("battDetail").textContent = "Verbrauch " + soc.consumed.toFixed(1).replace(".", ",") + " Ah";   // seit dem Verbinden entnommen
   }
   if (trip) sampleTrip(s, {        // geglättete Analogwerte für die 1-Hz-Aufzeichnung
     speed: speedS,
@@ -585,7 +586,6 @@ function render(s) {
   lastLight = s.light;
   $("cLight").className = "chip" + (s.light ? " on" : "");
   $("cLock").className = "chip" + (s.lock ? " on" : "");
-  $("cCruise").className = "chip" + (s.cruise ? " on" : "");
   const fault = !ERR_BENIGN.has(s.error);
   $("cErr").textContent = fault ? "Störung: " + errorName(s.error) : "Status: " + errorName(s.error);
   $("cErr").className = "chip" + (fault ? " bad" : "");
@@ -858,7 +858,7 @@ async function shareTrips(list) {
 function updateTripActions() {
   const n = tripSel.size;
   $("btnTripShare").disabled = n === 0; $("btnTripDel").disabled = n === 0;
-  $("btnTripShare").textContent = n > 1 ? "Senden als … (" + n + ")" : "Senden als …";
+  $("btnTripShare").textContent = n > 1 ? "Senden (" + n + ")" : "Senden als …";
   $("btnTripDel").textContent = n > 1 ? "Löschen (" + n + ")" : "Löschen";
   $("tripAll").checked = tripCache.length > 0 && n === tripCache.length;
   $("tripAll").disabled = tripCache.length === 0;
@@ -879,7 +879,7 @@ async function renderTrips() {
     cb.addEventListener("change", () => { if (cb.checked) tripSel.add(t.id); else tripSel.delete(t.id); updateTripActions(); });
     const info = document.createElement("div");
     info.innerHTML = "<div class=\"th\"><span>" + d.toLocaleDateString("de-AT") + " " + d.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" }) + "</span><span>" + sm.dist.toFixed(1).replace(".", ",") + " km</span></div>"
-      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh · " + t.samples.length + " Messpunkte</div>";
+      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh</div>";
     el.appendChild(cb); el.appendChild(info); box.appendChild(el);
   }
   updateTripActions();
