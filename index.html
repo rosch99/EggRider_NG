@@ -32,24 +32,38 @@
   .htools { display: flex; align-items: center; gap: 10px; }
   .ctl { display: flex; gap: 8px; margin-bottom: 12px; }
   .ctl button { flex: 1; }
-  .tripbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  [hidden] { display: none !important; }
+  .topbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .topbar .spacer, .tripactions .spacer { flex: 1; }
+  .mini { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 11px; font-size: 13px; font-weight: 500;
+    background: var(--panel); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; }
+  .mini .mlbl:empty { display: none; }
+  .recdot { width: 11px; height: 11px; border-radius: 50%; background: var(--muted); flex: none; }
+  .recdot.rec { background: var(--bad); animation: blink 1.2s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .recdot.rec { animation: none; } }
+  .tripbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 10px 14px; }
   .tripbar button { flex: none; }
   #btnTrip.rec { background: var(--bad); color: #fff; border-color: var(--bad); }
   .tripstat { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 15px; }
-  .trip { border-top: 1px solid var(--line); padding: 11px 0; }
-  .trip:first-child { border-top: 0; }
+  .tripactions { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; }
+  .tripactions button { padding: 7px 13px; min-height: 38px; font-size: 14px; }
+  .chk { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); flex: none; margin: 0; }
+  .trip { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding: 10px 0; cursor: pointer; }
+  .trip > div { flex: 1; min-width: 0; }
   .trip .th { display: flex; justify-content: space-between; font-weight: 650; }
   .trip .ts { color: var(--muted); font-size: 13px; margin-top: 3px; }
-  .trip .ta { display: flex; gap: 8px; margin-top: 9px; }
-  .trip .ta button { flex: none; padding: 7px 13px; min-height: 38px; font-size: 14px; }
   .iconbtn { min-height: 40px; padding: 8px 12px; font-size: 18px; background: transparent; border: 1px solid var(--line); color: var(--text); }
   .status { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--line);
     border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex: none; }
-  .dot.on { background: var(--accent); box-shadow: 0 0 0 4px rgba(61,220,151,.15); }
+  .dot.on { background: #30a46c; box-shadow: 0 0 0 4px rgba(48,164,108,.18); }   /* fest grün, auch im Offroad-Theme */
   .dot.busy { background: var(--warn); }
   .dot.err { background: var(--bad); }
   #statusText { flex: 1; min-width: 0; font-size: 14px; }
+  #voltCell { margin-left: 6px; }
   #statusText small { display: block; color: var(--muted); overflow-wrap: anywhere; }
   button { font: inherit; color: var(--bg); background: var(--accent); border: 0; border-radius: 12px;
     padding: 12px 16px; font-weight: 650; min-height: 46px; cursor: pointer; }
@@ -60,7 +74,8 @@
   .hero .num { font-size: 84px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
   .hero .unit { color: var(--muted); font-size: 14px; margin-top: 4px; }
   .bar { height: 28px; background: var(--line); border-radius: 9px; overflow: hidden; margin-top: 0; }
-  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .bar > i { display: block; height: 100%; width: 0; transition: width .3s;
+    background-image: linear-gradient(90deg, #e5484d 0%, #f5a524 50%, #30a46c 100%); background-repeat: no-repeat; background-size: 100% 100%; }
   .barlbl { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: 6px; }
   /* Gauges */
   .gauge { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
@@ -79,18 +94,18 @@
   .gauge.hero-g .g-label { font-size: 15px; }
   .g-track2 { fill: none; stroke: var(--line); stroke-width: 15; stroke-linecap: round; }
   .g-cad-arc { fill: none; stroke: var(--accent3); stroke-width: 15; stroke-linecap: round; transition: stroke-dasharray .35s ease; }
-  .g-cad { color: var(--accent3); font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 7px; }
+  .g-cad { color: var(--accent3); font-size: 25px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 7px; }
   .foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 22px; }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px 14px 16px; margin-bottom: 12px; }
   .panel > .ph { color: var(--muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
   /* Leistungs-Balken: Verhältnis Motor zu Fahrer (Segmente = Anteil an der Gesamtleistung, Summe 100 %) */
   .ph2 { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-  .ph2 > span:first-child { color: var(--muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
-  .ph2 > span:last-child { font-size: 27px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .ph2 > span:first-child { color: var(--muted); font-size: 24px; font-weight: 500; }
+  .ph2 > span:last-child { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .pbar { display: flex; height: 28px; border-radius: 9px; overflow: hidden; background: var(--line); }
   .pbar > i { display: block; height: 100%; width: 0; transition: width .35s ease; }
-  .pleg { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; font-size: 18px; font-variant-numeric: tabular-nums; }
-  .pleg b { font-size: 29px; }
+  .pleg { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 14px; margin-top: 10px; font-size: 24px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pleg b { font-size: 24px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
   .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 13px 15px; min-width: 0; }
   .tile .k { color: var(--muted); font-size: 13px; }
@@ -129,17 +144,31 @@
 <main>
   <div class="alert" id="alert"></div>
 
-  <div class="status">
-    <span class="dot" id="dot"></span>
+  <div class="topbar">
+    <button class="mini" id="tgConn" aria-label="Verbindung ein-/ausklappen"><span class="dot" id="dot"></span><span class="mlbl" id="connMini">Verbinden</span></button>
+    <button class="mini" id="tgTrip" aria-label="Fahrtaufzeichnung ein-/ausklappen" hidden><span class="recdot" id="tripIcon"></span><span class="mlbl" id="tripMini"></span></button>
+    <span class="spacer"></span>
+    <button class="mini" id="btnTheme" aria-label="Hell/Dunkel umschalten">☀️</button>
+  </div>
+
+  <div class="status" id="connPanel">
     <div id="statusText">Nicht verbunden<small id="statusSub">Display einschalten, dann „Verbinden“ tippen.</small></div>
     <button id="btnConnect">Verbinden</button>
-    <button class="iconbtn" id="btnTheme" aria-label="Hell/Dunkel umschalten">☀️</button>
   </div>
 
   <div class="tripbar" id="tripbar" hidden>
     <button class="ghost" id="btnTrip">● Fahrt aufzeichnen</button>
     <div class="tripstat"><span id="tripTime">00:00</span> · <span id="tripDist">0,0 km</span></div>
   </div>
+
+  <section class="panel">
+    <div class="ph2"><span>Akku</span><span id="battTxt">– %</span></div>
+    <div class="bar"><i id="battBar"></i></div>
+    <div class="pleg">
+      <span><b id="battEst" style="color:var(--accent2)">–</b></span>
+      <span id="battDetail"></span>
+    </div>
+  </section>
 
   <section class="gauge hero-g">
     <svg viewBox="0 0 200 158" aria-hidden="true">
@@ -157,7 +186,7 @@
   </section>
 
   <section class="panel">
-    <div class="ph2"><span>Leistung · Motor vs. Fahrer</span><span id="wattTot">– W</span></div>
+    <div class="ph2"><span>Leistung</span><span id="wattTot">– W</span></div>
     <div class="pbar">
       <i id="pbMotor" style="background:var(--warn)"></i>
       <i id="pbRider" style="background:var(--accent2)"></i>
@@ -168,23 +197,8 @@
     </div>
   </section>
 
-  <section class="panel">
-    <div class="ph2"><span>Akku</span><span id="battTxt">– %</span></div>
-    <div class="bar"><i id="battBar"></i></div>
-    <div class="pleg">
-      <span><b id="battEst" style="color:var(--accent2)">–</b></span>
-      <select id="battType" aria-label="Akkutyp">
-        <option value="10">36 V (10S)</option>
-        <option value="13" selected>48 V (13S)</option>
-        <option value="14">52 V (14S)</option>
-        <option value="16">60 V (16S)</option>
-      </select>
-    </div>
-    <div class="barlbl" style="margin-top:6px"><span id="battDetail"></span><span></span></div>
-  </section>
-
   <section class="grid">
-    <div class="tile"><div class="k">Spannung</div><div class="v"><span id="volt">–</span><small>V</small></div></div>
+    <div class="tile"><div class="k">Spannung<span id="voltCell"></span></div><div class="v"><span id="volt">–</span><small>V</small></div></div>
     <div class="tile"><div class="k">Unterstützung</div><div class="v"><span id="assist">–</span><small id="mode"></small></div></div>
   </section>
 
@@ -199,11 +213,23 @@
 
   <details class="setpanel" id="tripsPanel">
     <summary>Gespeicherte Fahrten</summary>
+    <div class="tripactions">
+      <label class="chk"><input type="checkbox" id="tripAll"> alle</label>
+      <span class="spacer"></span>
+      <button id="btnTripShare" disabled>Senden als …</button>
+      <button class="ghost" id="btnTripDel" disabled>Löschen</button>
+    </div>
     <div id="tripsBody"><div class="setrow"><span>noch keine Fahrten</span><span></span></div></div>
   </details>
 
   <details class="setpanel" id="setPanel" open>
     <summary>Display-Einstellungen</summary>
+    <div class="setrow"><span>Akkutyp (für SOC-Schätzung)</span><select id="battType" aria-label="Akkutyp">
+        <option value="10">36 V (10S)</option>
+        <option value="13" selected>48 V (13S)</option>
+        <option value="14">52 V (14S)</option>
+        <option value="16">60 V (16S)</option>
+      </select></div>
     <div id="setBody"><div class="setrow"><span>wird nach dem Verbinden gelesen …</span><span></span></div></div>
   </details>
 
@@ -218,7 +244,7 @@
   </details>
   <p class="note">Diese Seite liest nur Werte aus dem Display. Sie ändert keine Einstellungen an Display oder Motor.
   Bildschirm bitte eingeschaltet lassen – im Hintergrund trennt der Browser die Verbindung.</p>
-  <div class="foot">Bike-Display · v0.25 · nur lesen</div>
+  <div class="foot">Bike-Display · v0.26</div>
 </main>
 
 <script>
@@ -290,10 +316,14 @@ function log(msg) {
   el.textContent = logLines.join("\n");
   el.scrollTop = el.scrollHeight;
 }
+function setConnOpen(open) { $("connPanel").hidden = !open; }
+function setTripOpen(open) { $("tripbar").hidden = !open; }
 function setStatus(kind, text, sub) {
   $("dot").className = "dot" + (kind ? " " + kind : "");
   $("statusText").firstChild.nodeValue = text;
   $("statusSub").textContent = sub || "";
+  $("connMini").textContent = (kind === "on") ? "" : text;   // verbunden: nur das Symbol
+  setConnOpen(kind !== "on");                                // verbunden → einklappen; sonst (Fehler/getrennt) aufklappen
 }
 function showAlert(html) { const a = $("alert"); a.innerHTML = html; a.style.display = "block"; }
 
@@ -504,6 +534,7 @@ function updateSoc(voltage, current) {
 function render(s) {
   // Rohwerte in die Kacheln (für Diagnose exakt), geglättete Werte in die Gauges.
   $("volt").textContent = fmt(s.voltage, 1);
+  $("voltCell").textContent = "· " + (s.voltage / BATTERY.cells).toFixed(2) + " V/Zelle";
   $("assist").textContent = s.assist;
   $("mode").textContent = s.mode ? "Offroad" : "Road";
   const modeName = s.mode ? "offroad" : "road";   // Offroad → rötliches Theme wie am Display
@@ -515,7 +546,7 @@ function render(s) {
   const motorS = smooth("motor", motorW);
   const riderS = smooth("rider", riderW === null ? 0 : riderW);
   const cadS = smooth("cadence", s.cadence);
-  $("speed").textContent = fmt(speedS, 1);
+  $("speed").textContent = fmt(speedS, 0);
   setGauge("gSpeed", speedS, GAUGE.speed, band(speedS, 35, 50));
   // Innerer Arc: Trittfrequenz
   setGauge("gCad", cadS, GAUGE.cadence);
@@ -533,12 +564,12 @@ function render(s) {
   // Akku: Display-Wert als Balken, zusätzlich Spannungs-Schätzung (geglättet).
   const b = Math.max(0, Math.min(100, s.battery));
   $("battBar").style.width = b + "%";
+  $("battBar").style.backgroundSize = (b > 0 ? (10000 / b).toFixed(1) : 100) + "% 100%";   // Verlauf über die volle Balkenbreite (0 = rot, 100 = grün)
   $("battTxt").textContent = s.battery + " %";
   const soc = updateSoc(s.voltage, s.current);
   if (soc.soc != null) {
     $("battEst").textContent = "≈ " + soc.soc.toFixed(0) + " %";
-    $("battDetail").textContent = "Coulomb-Zähler · " + (s.voltage / BATTERY.cells).toFixed(2) + " V/Zelle · "
-      + soc.consumed.toFixed(2) + " / " + PACK.capacityAh + " Ah";
+    $("battDetail").textContent = soc.consumed.toFixed(1) + " / " + PACK.capacityAh + " Ah";
   }
   if (trip) sampleTrip(s, {        // geglättete Analogwerte für die 1-Hz-Aufzeichnung
     speed: speedS,
@@ -606,7 +637,7 @@ async function connect() {
     log("Verbunden, Benachrichtigungen aktiv.");
     setStatus("on", "Verbunden", device.name || "");
     $("btnConnect").textContent = "Trennen";
-    $("tripbar").hidden = false;
+    $("tgTrip").hidden = false;
     try { if ("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
     resetSmoothing();
     resetCoulomb();
@@ -630,7 +661,7 @@ async function connect() {
 function onDisconnected() {
   running = false;
   if (trip) stopTrip();          // laufende Fahrt sichern
-  $("tripbar").hidden = true;
+  $("tgTrip").hidden = true; setTripOpen(false);
   log("Verbindung getrennt.");
   setStatus("err", "Getrennt", "Zum erneuten Verbinden tippen.");
   $("btnConnect").textContent = "Verbinden";
@@ -733,6 +764,7 @@ function startTrip() {
   wrongCRCs = 0;
   trip = { id: Date.now(), startTs: Date.now(), samples: [], dist: 0, wh: 0, lastT: null, maxSpeed: 0 };
   $("btnTrip").textContent = "■ Fahrt stoppen"; $("btnTrip").classList.add("rec");
+  $("tripIcon").classList.add("rec");
   tripTimer = setInterval(updateTripStat, 1000); updateTripStat();
   startGeo();
   log("Fahrt-Aufzeichnung gestartet.");
@@ -743,6 +775,7 @@ async function stopTrip() {
   stopGeo();
   const t = trip; trip = null;
   $("btnTrip").textContent = "● Fahrt aufzeichnen"; $("btnTrip").classList.remove("rec");
+  $("tripIcon").classList.remove("rec"); $("tripMini").textContent = "";
   if (t.samples.length >= 2) {
     t.endTs = Date.now(); t.summary = tripSummary(t);
     try { await dbPut(store(t)); log("Fahrt gespeichert (" + t.samples.length + " Punkte, " + t.dist.toFixed(1) + " km)."); }
@@ -777,6 +810,7 @@ function sampleTrip(s, sm) {
 function updateTripStat() {
   if (!trip) return;
   $("tripTime").textContent = fmtDur(Math.round((Date.now() - trip.startTs) / 1000));
+  $("tripMini").textContent = $("tripTime").textContent;
   $("tripDist").textContent = trip.dist.toFixed(1).replace(".", ",") + " km";
 }
 function tripSummary(t) {
@@ -801,40 +835,72 @@ function tripCSV(t) {
   });
   return head + "\n" + rows.join("\n") + "\n";
 }
-async function shareTrip(t) {
-  const csv = tripCSV(t);
-  const name = "eggrider_" + new Date(t.startTs).toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".csv";
-  const file = new File([csv], name, { type: "text/csv" });
+const tripSel = new Set();      // ausgewählte Fahrten (ids)
+let tripCache = [];
+function tripFile(t) {
+  const d = new Date(t.startTs), p2 = (n) => String(n).padStart(2, "0");
+  const name = "eggrider_" + d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()) + "_" + p2(d.getHours()) + "-" + p2(d.getMinutes()) + "-" + p2(d.getSeconds()) + ".csv";
+  return new File([tripCSV(t)], name, { type: "text/csv" });
+}
+async function shareTrips(list) {
+  if (!list.length) return;
+  const files = list.map(tripFile);
   try {
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: "EggRider Fahrt", text: "Fahrt vom " + new Date(t.startTs).toLocaleString("de-AT") });
+    if (navigator.canShare && navigator.canShare({ files })) {
+      await navigator.share({ files, title: files.length === 1 ? "EggRider Fahrt" : files.length + " EggRider Fahrten" });
       return;
     }
-  } catch (e) { if (e && e.name === "AbortError") return; }
-  // Fallback: Download
-  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-  const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  } catch (e) { if (e && e.name === "AbortError") return; log("Teilen nicht möglich (" + e.name + ") – lade stattdessen herunter."); }
+  for (const f of files) {       // Fallback: Download je Datei
+    const url = URL.createObjectURL(f);
+    const a = document.createElement("a"); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    await new Promise((r) => setTimeout(r, 250));
+  }
+}
+function updateTripActions() {
+  const n = tripSel.size;
+  $("btnTripShare").disabled = n === 0; $("btnTripDel").disabled = n === 0;
+  $("btnTripShare").textContent = n > 1 ? "Senden als … (" + n + ")" : "Senden als …";
+  $("btnTripDel").textContent = n > 1 ? "Löschen (" + n + ")" : "Löschen";
+  $("tripAll").checked = tripCache.length > 0 && n === tripCache.length;
+  $("tripAll").disabled = tripCache.length === 0;
 }
 async function renderTrips() {
   let trips = [];
   try { trips = await dbAll(); } catch (e) { $("tripsBody").innerHTML = "<div class=\"setrow\"><span>Speicher nicht verfügbar</span><span></span></div>"; return; }
   trips.sort((a, b) => b.startTs - a.startTs);
-  if (!trips.length) { $("tripsBody").innerHTML = "<div class=\"setrow\"><span>noch keine Fahrten</span><span></span></div>"; return; }
+  tripCache = trips;
+  for (const id of [...tripSel]) if (!trips.some((t) => t.id === id)) tripSel.delete(id);
   const box = $("tripsBody"); box.innerHTML = "";
+  if (!trips.length) box.innerHTML = "<div class=\"setrow\"><span>noch keine Fahrten</span><span></span></div>";
   for (const t of trips) {
     const sm = t.summary || tripSummary(t);
     const d = new Date(t.startTs);
-    const el = document.createElement("div"); el.className = "trip";
-    el.innerHTML = "<div class=\"th\"><span>" + d.toLocaleDateString("de-AT") + " " + d.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" }) + "</span><span>" + sm.dist.toFixed(1).replace(".", ",") + " km</span></div>"
-      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh · " + t.samples.length + " Punkte</div>"
-      + "<div class=\"ta\"></div>";
-    const ta = el.querySelector(".ta");
-    const bs = document.createElement("button"); bs.textContent = "Senden als …"; bs.addEventListener("click", () => shareTrip(t)); ta.appendChild(bs);
-    const bd = document.createElement("button"); bd.className = "ghost"; bd.textContent = "Löschen"; bd.addEventListener("click", async () => { if (confirm("Fahrt löschen?")) { await dbDel(t.id); renderTrips(); } }); ta.appendChild(bd);
-    box.appendChild(el);
+    const el = document.createElement("label"); el.className = "trip";
+    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = tripSel.has(t.id);
+    cb.addEventListener("change", () => { if (cb.checked) tripSel.add(t.id); else tripSel.delete(t.id); updateTripActions(); });
+    const info = document.createElement("div");
+    info.innerHTML = "<div class=\"th\"><span>" + d.toLocaleDateString("de-AT") + " " + d.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" }) + "</span><span>" + sm.dist.toFixed(1).replace(".", ",") + " km</span></div>"
+      + "<div class=\"ts\">" + fmtDur(sm.durS) + " · ø " + sm.avgSpeed.toFixed(0) + " km/h · max " + sm.maxSpeed.toFixed(0) + " km/h · " + Math.round(sm.wh) + " Wh</div>";
+    el.appendChild(cb); el.appendChild(info); box.appendChild(el);
   }
+  updateTripActions();
 }
+$("tripAll").addEventListener("change", () => {
+  tripSel.clear();
+  if ($("tripAll").checked) tripCache.forEach((t) => tripSel.add(t.id));
+  renderTrips();
+});
+$("btnTripShare").addEventListener("click", () => shareTrips(tripCache.filter((t) => tripSel.has(t.id))));
+$("btnTripDel").addEventListener("click", async () => {
+  const n = tripSel.size; if (!n) return;
+  if (!confirm(n === 1 ? "Ausgewählte Fahrt löschen?" : n + " ausgewählte Fahrten löschen?")) return;
+  for (const id of [...tripSel]) { try { await dbDel(id); } catch (e) {} }
+  tripSel.clear(); renderTrips();
+});
+$("tgConn").addEventListener("click", () => setConnOpen($("connPanel").hidden));
+$("tgTrip").addEventListener("click", () => setTripOpen($("tripbar").hidden));
 
 // Hell/Dunkel-Umschalter (für bessere Lesbarkeit bei Sonne). Wahl wird lokal gemerkt.
 function updateMeta() {
